@@ -7,15 +7,21 @@
 ## INSTALLATION
 ### Clone the Repository
 * To clone the repository :
-    * `cd /directory/to/clone/in`
-    * `git clone git@github.com:jssandh2/coq-types.git`
+```bash
+cd /directory/to/clone/in
+git clone git@github.com:jssandh2/coq-types.git
+```
 ### Install Coq 
 * The current code can compile with Coq 8.5 and higher
 * My suggestion is to install Coq 8.6 using Brew :
-    * `brew install coq`
+```bash
+brew install coq
+```
 * Compilation of Coq files _can_ be done from the Command line _or_ inside the [Editor](https://coq.inria.fr/refman/Reference-Manual018.html) itself :
-    * `cd /directory/of/coq/file`
-    * `coqc filename.v`
+```bash
+cd /directory/of/coq/file
+coqc filename.v
+```
 
 ## STRUCTURE
 ### Directories
@@ -25,6 +31,6 @@
 
 
 ### Functions
-* Each type is implemented, with functions that are _verified_ using `Example` **and** `Proof`
+* Each type is implemented, with functions that are _verified_ using `Example` **and** `Proof` statements
 * The majority of the code is inspired from [**Software Foundations**](https://www.cis.upenn.edu/~bcpierce/sf/current/index.html), and therefore, there is significant overlap in the code. However, the main idea here is to solve the Exercises and reimplement certain functions on my own
 
