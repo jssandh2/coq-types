@@ -94,6 +94,12 @@ Proof. simpl. reflexivity. Qed.
 Notation "x + y" := (plus x y)
                         (at level 50, left associativity)
                         : nat_scope.
+Notation "x - y" := (minus x y)
+                       (at level 50, left associativity)
+                       : nat_scope.
+Notation "x * y" := (mult x y)
+                       (at level 40, left associativity)
+                       : nat_scope.
 
 (* Define Equality between 'nat' *)
 Fixpoint beq_nat (n m : nat) : bool :=
@@ -161,3 +167,42 @@ Proof.
   intros H.
   rewrite -> H.
   reflexivity. Qed.
+
+(* Addition of transitively equal nat *)
+Theorem plus_id_transitive: forall n m o: nat,
+  n = m -> m = o -> n + m = m + o.
+Proof.
+  intros n m o.
+  intros H1.
+  intros H2.
+  rewrite -> H1.
+  rewrite -> H2.
+  reflexivity. Qed.
+
+(* We can also use rewrite using a _previously_ proved Theorem *)
+Theorem add_0_and_mult : forall n m: nat,
+  (O + n) * m = n * m.
+Proof.
+  intros n m.
+  rewrite -> plus_O_n_l.
+  reflexivity. Qed.
+
+(* Proof for Right multiplication by Successor *)
+Theorem mult_S_n_1 : forall n m : nat,
+  m = S n -> m * ((S O) + n) = m * m.
+Proof.
+  intros n m.
+  intros H.
+  rewrite -> plus_1_n_l.
+  rewrite -> H.
+  reflexivity. Qed.
+
+(* When the _evaluation_ of an argument itself is recursive, then
+proofs can't simply use _rewrite_ or _simpl_ -> Use _destruct_ *)
+Theorem plus_1_neq_O : forall n : nat,
+  beq_nat (n + (S O)) O = false.
+Proof.
+  intros n. destruct n as [|n'].
+  - reflexivity.
+  - reflexivity. Qed.
+
