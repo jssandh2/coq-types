@@ -2,11 +2,11 @@ Inductive bool : Type :=
   | true : bool
   | false : bool.
 
-Definition negate_bool (b:bool) : bool := 
+Definition negate_bool (b:bool) : bool :=
   match b with
   | true => false
   | false => true
-end. 
+end.
 
 Definition and_bool (b1:bool) (b2:bool) : bool :=
   match b1 with
@@ -21,14 +21,13 @@ Definition or_bool (b1:bool) (b2:bool) : bool :=
 end.
 
 Definition xor_bool (b1:bool) (b2:bool) : bool :=
-  match b1 with 
+  match b1 with
   | true => (negate_bool b2)
   | false => b2
-end. 
+end.
 
 Definition nand_bool (b1:bool) (b2:bool) : bool :=
-  (negate_bool (and_bool b1 b2))
-end.
+  negate_bool (and_bool b1 b2).
 
 Example test_nand_bool1: (nand_bool true false) = true.
 Proof. simpl. reflexivity. Qed.
@@ -48,27 +47,27 @@ Proof. simpl. reflexivity. Qed.
 
 (* The command : Admitted acts as a placeholder for a 'Proof' that isn't formally proved *)
 
-Definition nand_bool_3 (b1:bool) (b2:bool) (b3:bool) : bool :=
+Definition and_bool_3 (b1:bool) (b2:bool) (b3:bool) : bool :=
   match b1 with
-  | true => (nand_bool b2 b3)
+  | true => (and_bool b2 b3)
   | false => false
 end.
 
-Example test_nand_bool_31: (nand_bool_3 true true true) = true.
+Example test_and_bool_31: (and_bool_3 true true true) = true.
 Proof. simpl. reflexivity. Qed.
-Example test_nand_bool_32: (nand_bool_3 true true false) = false.
+Example test_and_bool_32: (and_bool_3 true true false) = false.
 Proof. simpl. reflexivity. Qed.
-Example test_nand_bool_33: (nand_bool_3 true false true) = false.
+Example test_and_bool_33: (and_bool_3 true false true) = false.
 Proof. simpl. reflexivity. Qed.
-Example test_nand_bool_34: (nand_bool_3 true false false) = false.
+Example test_and_bool_34: (and_bool_3 true false false) = false.
 Proof. simpl. reflexivity. Qed.
-Example test_nand_bool_35: (nand_bool_3 false true true) = false.
+Example test_and_bool_35: (and_bool_3 false true true) = false.
 Proof. simpl. reflexivity. Qed.
-Example test_nand_bool_36: (nand_bool_3 false true false) = false.
+Example test_and_bool_36: (and_bool_3 false true false) = false.
 Proof. simpl. reflexivity. Qed.
-Example test_nand_bool_37: (nand_bool_3 false false true) = false.
+Example test_and_bool_37: (and_bool_3 false false true) = false.
 Proof. simpl. reflexivity. Qed.
-Example test_nand_bool_38: (nand_bool_3 false false false) = false.
+Example test_and_bool_38: (and_bool_3 false false false) = false.
 Proof. simpl. reflexivity. Qed.
 
 (* One can use the  : 'Check' command to verify the Types of computations *)
@@ -79,3 +78,51 @@ Check negate_bool.
 
 
 
+(* Proving that if an 'and' expression is true, then so is the second argument. *)
+(* We'll use destruction on b *)
+(* We also need to prove the commutativity of 'and_bool' first *)
+Theorem andb_commutative: forall b c : bool,
+  and_bool b c = and_bool c b.
+Proof.
+  intros b c.
+  destruct b.
+  - destruct c.
+    + reflexivity.
+    + reflexivity.
+  - destruct c.
+    + reflexivity.
+    + reflexivity.
+Qed.
+
+
+Theorem and_is_second_arg: forall b c: bool,
+c = true -> and_bool c b = b.
+Proof.
+intros b c.
+intros H.
+rewrite -> H.
+reflexivity.
+Qed.
+
+(* Exercise 2 : Prove that if and x y = or x y, then x = y *)
+(* First let's prove somthing simpler -> The other direction *)
+Theorem eq_andb_orb : forall b c: bool,
+b = c -> (and_bool b c = or_bool b c).
+Proof.
+intros b c.
+intros H.
+rewrite -> H.
+destruct c.
+- reflexivity.
+- reflexivity.
+Qed.
+
+(* Main Theorem *)
+Theorem andb_eq_orb : forall b c: bool,
+(and_bool b c = or_bool b c) -> b = c.
+Proof.
+intros b c.
+destruct b.
+- simpl. intros H. rewrite -> H. reflexivity.
+- simpl. intros H. rewrite -> H. reflexivity.
+Qed.

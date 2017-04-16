@@ -206,3 +206,14 @@ Proof.
   - reflexivity.
   - reflexivity. Qed.
 
+(* Proof that 1 plus anything can never be zero in the realm of the natural numbers *)
+Theorem zero_nbeq_plus_1: forall n: nat,
+beq_nat O (n + (S O)) = false.
+Proof.
+intros n. destruct n as [|n'].
+- reflexivity.
+- reflexivity. Qed.
+
+(* Exercise 1 : Show that the identity function applied twice is the same as it being applied once *)
+(* //TODO : Juspreet *)
+
