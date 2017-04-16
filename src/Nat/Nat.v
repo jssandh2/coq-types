@@ -216,4 +216,40 @@ intros n. destruct n as [|n'].
 
 (* Exercise 1 : Show that the identity function applied twice is the same as it being applied once *)
 (* //TODO : Juspreet *)
+Theorem identity_fn_applied_twice : forall (f : bool -> bool),
+(forall (x: bool), f x = x) -> forall (b: bool), f (f b) = b.
+Proof.
+Admitted.
+
+(* Exercise 3 : We will buld a representation of Natural Numbers using 0, Odd-ness, Even-ness *)
+Inductive natBinary : Type :=
+  | I : natBinary
+  | Ev : natBinary -> natBinary
+  | Od : natBinary -> natBinary.
+
+Fixpoint incr (n: natBinary) : natBinary :=
+  match n with
+    | I => Od I 
+    | Ev n' => Od n'
+    | Od n' => Ev (incr n')
+end.
+
+Fixpoint bin_to_nat (bin: natBinary) : nat :=
+  match bin with
+    | I => O
+    | Ev bin' => plus (bin_to_nat bin') (bin_to_nat bin')
+    | Od bin' => plus (S O) (plus (bin_to_nat bin') (bin_to_nat bin'))
+end.
+
+Example test_bin_incr1 : (incr (Od (Od (Od I)))) = (Ev (Ev (Ev (Od I)))).
+Proof. simpl. reflexivity. Qed.
+Example test_bin_incr2 : (incr (Ev (Od (Od I)))) = (Od (Od (Od I))).
+Proof. simpl. reflexivity. Qed.
+Example test_bin_to_nat1 : (bin_to_nat (Ev (Od (Od I)))) = (S (S (S (S (S (S O)))))).
+Proof. simpl. reflexivity. Qed.
+Example test_bin_to_nat2 : (bin_to_nat (Od (Ev (Od I)))) = (S (S (S (S (S O))))).
+Proof. simpl. reflexivity. Qed.
+Example test_incr_and_bin_to_nat1 : (plus (bin_to_nat (Od (Ev (Od I)))) (S O)) = (bin_to_nat (incr (Od (Ev (Od I))))).
+Proof. simpl. reflexivity. Qed.
+
 
