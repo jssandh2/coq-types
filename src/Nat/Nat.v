@@ -215,11 +215,15 @@ intros n. destruct n as [|n'].
 - reflexivity. Qed.
 
 (* Exercise 1 : Show that the identity function applied twice is the same as it being applied once *)
-(* //TODO : Juspreet *)
 Theorem identity_fn_applied_twice : forall (f : bool -> bool),
 (forall (x: bool), f x = x) -> (forall (b: bool), f (f b) = b).
 Proof.
-Admitted.
+intros f H b.
+rewrite <- H.
+simpl.
+rewrite <- H.
+reflexivity.
+Qed.
 
 (* Exercise 3 : We will buld a representation of Natural Numbers using 0, Odd-ness, Even-ness *)
 Inductive natBinary : Type :=
