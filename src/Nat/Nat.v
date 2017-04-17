@@ -217,7 +217,7 @@ intros n. destruct n as [|n'].
 (* Exercise 1 : Show that the identity function applied twice is the same as it being applied once *)
 (* //TODO : Juspreet *)
 Theorem identity_fn_applied_twice : forall (f : bool -> bool),
-(forall (x: bool), f x = x) -> forall (b: bool), f (f b) = b.
+(forall (x: bool), f x = x) -> (forall (b: bool), f (f b) = b).
 Proof.
 Admitted.
 
