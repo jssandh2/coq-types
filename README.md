@@ -1,5 +1,5 @@
 # TYPES 
-* A repository containing an implementation of certain Types (such as Nat, Bool, etc.) in Coq, with Theorems and Functions
+* A repository containing an implementation of certain Types (such as Nat, Bool, etc.) in Coq, with Theorems and Functions. There is also dedicated files to writing styles of Proofs (such as Induction, etc.)
 
 ## REPOSITORY
 * [coq-types](https://github.com/jssandh2/coq-types)
@@ -28,7 +28,13 @@ coqc filename.v
 * Each `Type` is implemented in a _separate_ directory inside :
     * Bool : `src/Bool/*`
     * Nat : `src/Nat/*`
-
+    * Induction : `src/Induction/*`
+* _Some_ folders have a corresponding `*.vo` file with them, which is necessary to use as linkage. Specifically :
+```Coq
+Require Export * (* Here * = Type/Proof filename *)
+```
+uses the `.vo` file extension to "link" appropriate files. This allows you to use types defined in `*.v` in your current file.
+* To create a `*.vo` file, simply compile the `.v` file.
 
 ### Functions
 * Each type is implemented, with functions that are _verified_ using `Example` **and** `Proof` statements
