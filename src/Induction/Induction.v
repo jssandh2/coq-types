@@ -3,11 +3,10 @@ Require Export Nat.
 (* We will use the 'nat','bool' types here. *)
 
 (* Let's begin with an Example Theorem that we prove by Induction *)
-Theorem plus_n_O: forall n: nat,
+Theorem plus_n_O : forall n: nat,
 n = n + O.
 Proof.
-intros n.
-induction n as [|n' IHn'].
+intros n. induction n as [|n' IHn'].
 - (* n = O *) reflexivity.
 - (* n = S n' *) simpl. rewrite <- IHn'. reflexivity.
 Qed.
@@ -21,7 +20,7 @@ intros n. induction n as [|n' IHn'].
 Qed.
 
 (* Exercise 1 : Basic Induction Exercises *)
-Theorem mult_O_r: forall n: nat,
+Theorem mult_O_r : forall n: nat,
 n * O = O.
 Proof.
 intros n. induction n as [|n' IHn'].
@@ -29,7 +28,7 @@ intros n. induction n as [|n' IHn'].
 - simpl. rewrite -> IHn'. reflexivity.
 Qed.
 
-Theorem plus_n_Sm: forall n m: nat,
+Theorem plus_n_Sm : forall n m: nat,
 S (n + m) = n + (S m).
 Proof.
 intros n m. induction n as [| n' IHn'].
@@ -37,7 +36,7 @@ intros n m. induction n as [| n' IHn'].
 - simpl. rewrite -> IHn'. simpl. reflexivity.
 Qed.
 
-Theorem plus_comm: forall n m: nat,
+Theorem plus_comm : forall n m: nat,
 n + m = m + n.
 Proof.
 intros n m. induction n as [| n' IHn'].
@@ -45,7 +44,7 @@ intros n m. induction n as [| n' IHn'].
 - simpl. rewrite -> IHn'. rewrite -> plus_n_Sm. reflexivity.
 Qed.
 
-Theorem plus_assoc: forall n m o: nat,
+Theorem plus_assoc : forall n m o: nat,
 n + (m + o) = (n + m) + o.
 Proof.
 intros n m o. induction n as [| n' IHn'].
@@ -74,7 +73,7 @@ Qed.
 (* NOTE : 'induction' sets up a proposition by having a base case proved, assuming the IH, and then proving a general statement *)
 
 (* Introductin of the 'assert' tactic : Refer to _local_ theorems in lexical-scope. *)
-Theorem mult_O_plus: forall n m: nat,
+Theorem mult_O_plus : forall n m: nat,
 (O + n) * m = n * m.
 Proof.
 intros n m.
@@ -84,7 +83,7 @@ reflexivity.
 Qed.
 
 (* Another use case of the 'assert' tactic is to allow flexible 'rewrite' by introducing hypotheses in a smarter way *)
-Theorem plus_rearrange: forall n m p q: nat,
+Theorem plus_rearrange : forall n m p q: nat,
 (n + m) + (p + q) = (m + n) + (p + q).
 Proof.
 intros n m p q.
@@ -102,7 +101,8 @@ Qed.
 (* Qed. *)
 
 (* Exercise 2 : More Exercises *)
-Theorem plus_swap: forall n m p: nat,
+(* Main Theorem 1 *) 
+Theorem plus_swap : forall n m p: nat,
 n + (m + p) = m + (n + p).
 Proof.
 intros n m p.
@@ -115,7 +115,7 @@ rewrite -> H3.
 reflexivity.
 Qed.
 
-Theorem add_term_mult_succ: forall n m: nat,
+Theorem add_term_mult_succ : forall n m: nat,
 m + (m * n) = m * (S n).
 Proof.
 intros n m. induction m as [|m' IHm'].
@@ -123,7 +123,8 @@ intros n m. induction m as [|m' IHm'].
 - simpl. rewrite <- IHm'. rewrite -> plus_swap. reflexivity.
 Qed.
 
-Theorem mult_comm: forall n m: nat,
+(* Main Theorem 2 *) 
+Theorem mult_comm : forall n m: nat,
 n * m = m * n.
 Proof.
 intros n m. induction n as [|n' IHn'].

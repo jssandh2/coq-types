@@ -120,13 +120,11 @@ Example test_beq_nat_2: (beq_nat (S (S (S O))) (S (S O))) = false.
 Proof. simpl. reflexivity. Qed.
 
 (* Define a function to test : n <= m, without using 'Fixpoint' *)
-Definition leq_nat (n m : nat) : bool :=
-  match n with 
-  | O => true
-  | S n' => match (minus_2 n m) with
-            | O => true
-            | S num => false
-            end
+Fixpoint leq_nat (n m : nat) : bool :=
+  match n, m with
+  | O, _ => true
+  | S _, O => false
+  | S n', S m' => leq_nat n' m'
 end.
 
 (* Some computations of 'leq' before the Proofs *)
@@ -160,8 +158,8 @@ Proof.
 
 (* Addition of equal nat *)
 Theorem plus_id : forall n m: nat,
-  n = m ->
-  n + n = m + m.
+n = m ->
+n + n = m + m.
 Proof.
   intros n m.
   intros H.
@@ -169,8 +167,8 @@ Proof.
   reflexivity. Qed.
 
 (* Addition of transitively equal nat *)
-Theorem plus_id_transitive: forall n m o: nat,
-  n = m -> m = o -> n + m = m + o.
+Theorem plus_id_transitive : forall n m o: nat,
+n = m -> m = o -> n + m = m + o.
 Proof.
   intros n m o.
   intros H1.
@@ -181,15 +179,15 @@ Proof.
 
 (* We can also use rewrite using a _previously_ proved Theorem *)
 Theorem add_0_and_mult : forall n m: nat,
-  (O + n) * m = n * m.
+(O + n) * m = n * m.
 Proof.
   intros n m.
   rewrite -> plus_O_n_l.
   reflexivity. Qed.
 
 (* Proof for Right multiplication by Successor *)
-Theorem mult_S_n_1 : forall n m : nat,
-  m = S n -> m * ((S O) + n) = m * m.
+Theorem mult_S_n_1 : forall n m: nat,
+m = S n -> m * ((S O) + n) = m * m.
 Proof.
   intros n m.
   intros H.
@@ -199,15 +197,15 @@ Proof.
 
 (* When the _evaluation_ of an argument itself is recursive, then
 proofs can't simply use _rewrite_ or _simpl_ -> Use _destruct_ *)
-Theorem plus_1_neq_O : forall n : nat,
-  beq_nat (n + (S O)) O = false.
+Theorem plus_1_neq_O : forall n: nat,
+beq_nat (n + (S O)) O = false.
 Proof.
   intros n. destruct n as [|n'].
   - reflexivity.
   - reflexivity. Qed.
 
 (* Proof that 1 plus anything can never be zero in the realm of the natural numbers *)
-Theorem zero_nbeq_plus_1: forall n: nat,
+Theorem zero_nbeq_plus_1 : forall n: nat,
 beq_nat O (n + (S O)) = false.
 Proof.
 intros n. destruct n as [|n'].
@@ -225,35 +223,79 @@ rewrite <- H.
 reflexivity.
 Qed.
 
-(* Exercise 3 : We will buld a representation of Natural Numbers using 0, Odd-ness, Even-ness *)
-Inductive natBinary : Type :=
-  | I : natBinary
-  | Ev : natBinary -> natBinary
-  | Od : natBinary -> natBinary.
+Theorem unnecess_brack_add : forall n m p: nat,
+p + (n + m) = p + n + m.
+Proof.
+intros n m p. induction p as [|p' IHp'].
+- simpl. reflexivity.
+- simpl. rewrite -> IHp'. simpl. reflexivity.
+Qed.
 
-Fixpoint incr (n: natBinary) : natBinary :=
-  match n with
-    | I => Od I 
-    | Ev n' => Od n'
-    | Od n' => Ev (incr n')
-end.
+(* A List of Proofs about Functions of `Nat` from Chapter-3 (Induction) *)
+(* NOTE : Not all _require_ Induction. In fact, the goal is to skillfully be minimal in the proofs *)
+Theorem leq_nat_refl : forall n: nat,
+true = leq_nat n n.
+Proof.
+intros n. induction n as [|n' IHn'].
+- simpl. reflexivity.
+- simpl. rewrite <- IHn'. reflexivity.
+Qed.
 
-Fixpoint bin_to_nat (bin: natBinary) : nat :=
-  match bin with
-    | I => O
-    | Ev bin' => plus (bin_to_nat bin') (bin_to_nat bin')
-    | Od bin' => plus (S O) (plus (bin_to_nat bin') (bin_to_nat bin'))
-end.
+Theorem zero_nbeq_S : forall n: nat,
+beq_nat O (S n) = false.
+Proof.
+intros n.
+simpl.
+reflexivity.
+Qed.
 
-Example test_bin_incr1 : (incr (Od (Od (Od I)))) = (Ev (Ev (Ev (Od I)))).
-Proof. simpl. reflexivity. Qed.
-Example test_bin_incr2 : (incr (Ev (Od (Od I)))) = (Od (Od (Od I))).
-Proof. simpl. reflexivity. Qed.
-Example test_bin_to_nat1 : (bin_to_nat (Ev (Od (Od I)))) = (S (S (S (S (S (S O)))))).
-Proof. simpl. reflexivity. Qed.
-Example test_bin_to_nat2 : (bin_to_nat (Od (Ev (Od I)))) = (S (S (S (S (S O))))).
-Proof. simpl. reflexivity. Qed.
-Example test_incr_and_bin_to_nat1 : (plus (bin_to_nat (Od (Ev (Od I)))) (S O)) = (bin_to_nat (incr (Od (Ev (Od I))))).
-Proof. simpl. reflexivity. Qed.
+Theorem plus_ble_compat_l : forall n m p: nat,
+leq_nat n m = true -> leq_nat (p + n) (p + m) = true.
+Proof.
+intros n m p H. induction p as [|p' IHp'].
+- simpl. rewrite -> H. reflexivity.
+- simpl. rewrite -> IHp'. reflexivity.
+Qed.
+
+Theorem S_nbeq_O : forall n: nat,
+  beq_nat (S n) O = false.
+Proof.
+intros n.
+simpl.
+reflexivity.
+Qed.
+
+(* Temporary re-proof {already done in Induction.v} of plus_n_O *)
+Theorem plus_n_O : forall n: nat,
+n = n + O.
+Proof.
+intros n. induction n as [|n' IHn'].
+- (* n = O *) reflexivity.
+- (* n = S n' *) simpl. rewrite <- IHn'. reflexivity.
+Qed.
+
+Theorem mult_1_l : forall n: nat, 
+(S O) * n = n.
+Proof.
+intros n. induction n as [|n' IHn'].
+- simpl. reflexivity.
+- simpl. rewrite <- plus_n_O. reflexivity.
+Qed.
+
+Theorem mult_plus_distr_r : forall n m p: nat,
+  (n + m) * p = (n * p) + (m * p).
+Proof.
+intros n m p. induction n as [|n' IHn'].
+- simpl. reflexivity.
+- simpl. rewrite -> IHn'. rewrite -> unnecess_brack_add. reflexivity.
+Qed.
+
+Theorem beq_nat_refl : forall n: nat,
+true = beq_nat n n.
+Proof.
+intros n. induction n as [|n' IHn'].
+- simpl. reflexivity.
+- simpl. rewrite -> IHn'. simpl. reflexivity.
+Qed.
 
 

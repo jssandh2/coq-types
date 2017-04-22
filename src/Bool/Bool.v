@@ -81,7 +81,7 @@ Check negate_bool.
 (* Proving that if an 'and' expression is true, then so is the second argument. *)
 (* We'll use destruction on b *)
 (* We also need to prove the commutativity of 'and_bool' first *)
-Theorem andb_commutative: forall b c : bool,
+Theorem andb_commutative : forall b c : bool,
   and_bool b c = and_bool c b.
 Proof.
   intros b c.
@@ -125,4 +125,28 @@ intros b c.
 destruct b.
 - simpl. intros H. rewrite -> H. reflexivity.
 - simpl. intros H. rewrite -> H. reflexivity.
+Qed.
+
+(* A List of Proofs about Functions of `Bool` from Chapter-3 (Induction) *)
+(* NOTE : Not all _require_ Induction. In fact, the goal is to skillfully be minimal in the proofs *)
+Theorem andb_false_r : forall b: bool,
+and_bool b false = false.
+Proof.
+intros b.
+destruct b.
+- simpl. reflexivity.
+- simpl. reflexivity.
+Qed.
+
+Theorem all3_spec : forall b c : bool,
+or_bool (and_bool b c) (or_bool (negate_bool b) (negate_bool c))= true.
+Proof.
+intros b c.
+destruct b.
+- destruct c.
+  + simpl. reflexivity.
+  + simpl. reflexivity.
+- destruct c.
+  + simpl. reflexivity.
+  + simpl. reflexivity.
 Qed.
