@@ -25,14 +25,16 @@ coqc filename.v
 
 ## STRUCTURE
 ### Directories
-* Each `Type`/`Proof Style` is implemented in a _separate_ directory inside :
-    * Bool : `src/Bool/*`
-    * Nat : `src/Nat/*`
-    * Induction : `src/Induction/*`
-    * NatBinary : `src/NatBinary/*`
+* Each `Type`/`Proof` is implemented in a _separate_ directory inside :
+    * Types :
+        * `Nat` : Implementation of the Natural Numbers, verified with Theorems - `src/Types/Nat`
+        * `Bool` : Implementation of the Booleans, verified with Theorems - `src/Types/Bool`
+        * `NatBinary` : Implementation of the Natural Numbers with {Even,Odd} Functions, verified with Theorems - `src/Types/NatBinary`
+    * Proofs :
+        * `Induction` : Implementation of many Theorems regarding {Nat,NatBinary} with Induction - `src/Proofs/Induction`
 * _Some_ folders have a corresponding `*.vo` file with them, which is necessary to use as linkage. Specifically :
 ```Coq
-Require Export * (* Here * = Type/Proof filename *)
+Require Export * (* Here * = (src/Type/a/ filename) \/ (src/Proof/b/ filename) *)
 ```
 uses the `.vo` file extension to "link" appropriate files. This allows you to use types defined in `*.v` in your current file.
 * To create a `*.vo` file, simply compile the `.v` file.
