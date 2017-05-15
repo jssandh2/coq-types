@@ -297,5 +297,3 @@ intros n. induction n as [|n' IHn'].
 - simpl. reflexivity.
 - simpl. rewrite -> IHn'. simpl. reflexivity.
 Qed.
-
-

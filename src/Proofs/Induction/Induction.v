@@ -7,8 +7,8 @@ Theorem plus_n_O : forall n: nat,
 n = n + O.
 Proof.
 intros n. induction n as [|n' IHn'].
-- (* n = O *) reflexivity.
-- (* n = S n' *) simpl. rewrite <- IHn'. reflexivity.
+- reflexivity.
+- simpl. rewrite <- IHn'. reflexivity.
 Qed.
 
 Theorem minus_diag : forall n,

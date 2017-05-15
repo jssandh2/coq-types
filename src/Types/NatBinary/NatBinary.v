@@ -64,4 +64,3 @@ intros n. induction n as [|n' IHn'|n'' IHn''].
 - simpl. reflexivity.
 - simpl. rewrite <- IHn''. rewrite <- plus_n_Sm. simpl. reflexivity.
 Qed.
-
