@@ -3,16 +3,16 @@ Inductive nat : Type :=
   | O : nat
   | S : nat -> nat.
 
+(* Quick redefinition of : bool *)
+Inductive bool : Type :=
+  | true : bool
+  | false : bool.
+
 Definition pred (n:nat) : nat :=
   match n with
     | O => O
     | S n' => n'
 end.
-
-(* Quick redefinition of : bool *)
-Inductive bool : Type :=
-  | true : bool
-  | false : bool.
 
 (* Verify the Number 3 *)
 Check (S (S (S O))).
