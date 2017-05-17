@@ -153,3 +153,66 @@ Proof. simpl. reflexivity. Qed.
 Example test_alternate3:
   alternate [O;(S O);(S (S O))] [(S (S (S O)))] = [O;(S (S (S O)));(S O);(S (S O))].
 Proof. simpl. reflexivity. Qed.
+
+(* An implementation of a 'bag' ('multiset') as a 'natlist' *)
+Definition bag := natlist.
+
+(* Counts the number of elements in a bag that are equal to some value *)
+Fixpoint count (v : nat) (s : bag) : nat :=
+  match s with
+  | [ ] => O
+  | h :: t => match (beq_nat h v) with
+              | true => (plus (S O) (count v t))
+              | false => (count v t)
+              end
+  end.
+
+(* Sum basically _Unions_ two bags [without removing duplicates] *)
+Definition sum (b1 b2 : bag) : bag :=
+  (app b1 b2).
+
+(* Add basically adds an element to the bag *)
+Definition add (v : nat) (s : bag) : bag :=
+  (app [v] s).
+
+(* Member checks whether a given element belongs to the bag *)
+Definition member (v : nat) (s : bag) : bool :=
+  match (count v s) with
+  | O => false
+  | _ => true
+  end.
+
+(* A helper function for 'remove_one' *)
+Fixpoint remove_one_helper (v : nat) (s : bag) (safe : bag) : bag :=
+  match s with
+  | [ ] => safe
+  | h :: t => match (beq_nat v h) with
+              | true => (safe ++ t)
+              | false => (remove_one_helper v t ([h] ++ safe))
+              end
+  end.
+
+(* Removes an [first] instance of 'v' from 's' *)
+Fixpoint remove_one (v : nat) (s : bag) : bag :=
+  (remove_one_helper v s [ ]).
+
+(* A helper function for 'remove_all' *)
+Fixpoint remove_all_helper (n : nat) (v : nat) (s : bag) : bag :=
+  match n with
+  | O => s
+  | S n' => (remove_all_helper n' v (remove_one v s))
+  end.
+
+(* Removes [all] occurences of 'v' in 's' from 's' *)
+Fixpoint remove_all (v : nat) (s : bag) : bag :=
+  (remove_all_helper (count v s) v s).
+
+(* Checks whether bag b1 is a subset of bag b2 *)
+Fixpoint subset (s1 : bag) (s2 : bag) : bool :=
+  match s1 with
+  | [ ] => true
+  | h :: t => match (leq_nat (count h s1) (count h s2)) with
+              | true => (subset t s2)
+              | false => false
+              end
+  end.
