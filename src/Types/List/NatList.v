@@ -216,3 +216,27 @@ Fixpoint subset (s1 : bag) (s2 : bag) : bool :=
               | false => false
               end
   end.
+
+(* Theorem relating the functions : {count,add} *)
+Theorem count_add_element : forall (v : nat) (s : bag),
+  (count v (add v s)) = (count v s) + (S O).
+Proof.
+Admitted.
+
+(* Some simple facts about {NatList} *)
+Theorem nil_app : forall l : natlist,
+  [ ] ++ l = l.
+Proof.
+  intros l.
+  simpl.
+  reflexivity.
+Qed.
+
+Theorem tl_length_pred : forall l : natlist,
+  pred (length l) = length (tl l).
+Proof.
+  intros l.
+  destruct l as [| n l'].
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+Qed.
