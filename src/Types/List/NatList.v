@@ -233,10 +233,49 @@ Proof.
 Qed.
 
 Theorem tl_length_pred : forall l : natlist,
-  pred (length l) = length (tl l).
+    pred (length l) = length (tl l).
 Proof.
   intros l.
   destruct l as [| n l'].
   - simpl. reflexivity.
   - simpl. reflexivity.
+Qed.
+
+(* Induction on Lists *)
+Theorem app_assoc : forall l1 l2 l3 : natlist,
+  l1 ++ (l2 ++ l3) = (l1 ++ l2) ++ l3.
+Proof.
+  intros l1 l2 l3.
+  induction l1 as [| n l1' IHl1'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHl1'. reflexivity.
+Qed.
+
+(* Reversing a List *)
+Fixpoint rev (l : natlist) : natlist :=
+  match l with
+  | [ ] => [ ]
+  | h :: l' => (rev l') ++ [h]
+  end.
+
+(* To prove that the length of a list is equal to its reverse, we need to show that :
+   length (l1 ++ l2) = length l1 + length l2 *)
+Theorem length_concat : forall l1 l2 : natlist,
+  length (l1 ++ l2) = (length l1) + (length l2).
+Proof.
+  intros l1 l2.
+  induction l1 as [| n' l1' IHl1'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHl1'. simpl. reflexivity.
+Qed.
+
+Theorem length_rev : forall l : natlist,
+  length l = length (rev l).
+Proof.
+  intros l.
+  induction l as [| n' l1' IHl1'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> length_concat. simpl. rewrite -> IHl1'.
+    rewrite -> plus_comm.
+    reflexivity.
 Qed.
