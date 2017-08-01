@@ -275,7 +275,5 @@ Proof.
   intros l.
   induction l as [| n' l1' IHl1'].
   - simpl. reflexivity.
-  - simpl. rewrite -> length_concat. simpl. rewrite -> IHl1'.
-    rewrite -> plus_comm.
-    reflexivity.
+  - simpl. rewrite -> length_concat. simpl. rewrite -> IHl1'. rewrite -> plus_comm. reflexivity.
 Qed.
