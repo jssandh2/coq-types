@@ -4,6 +4,8 @@
 Require Export Nat.
 Require Import Induction.
 
+(* ////////// NATPAIR \\\\\\\\\\\ *)
+
 (* 1) Implement a Type : NatPair -> Pair of Natural Numbers *)
 Inductive natpair : Type :=
   | pair : nat -> nat -> natpair.
@@ -62,6 +64,8 @@ Proof.
   simpl.
   reflexivity.
 Qed.
+
+(* ////////// NATLIST \\\\\\\\\\\ *)
 
 (* We can now implementation the {natlist} Datatype *)
 Inductive natlist : Type :=
@@ -154,6 +158,8 @@ Example test_alternate3:
   alternate [O;(S O);(S (S O))] [(S (S (S O)))] = [O;(S (S (S O)));(S O);(S (S O))].
 Proof. simpl. reflexivity. Qed.
 
+(* ////////// BAG \\\\\\\\\\\ *)
+
 (* An implementation of a 'bag' ('multiset') as a 'natlist' *)
 Definition bag := natlist.
 
@@ -217,6 +223,32 @@ Fixpoint subset (s1 : bag) (s2 : bag) : bool :=
               end
   end.
 
+(* Reversing a List *)
+Fixpoint rev (l : natlist) : natlist :=
+  match l with
+  | [ ] => [ ]
+  | h :: l' => (rev l') ++ [h]
+  end.
+
+Fixpoint beq_natlist (l1 l2 : natlist) : bool :=
+  match l1 with
+  | [ ] => match l2 with
+           | [ ] => true
+           | h :: t => false
+           end
+  | h1 :: t1 => match l2 with
+                | [ ] => false
+                | h2 :: t2 => match (beq_nat h1 h2) with
+                              | true => (beq_natlist t1 t2)
+                              | false => false
+                              end
+                end
+  end.
+
+(* ////////// PROOFS \\\\\\\\\\\ *)
+
+(* Exercises on {NatList,Bag,NatPair} with Induction *)
+
 (* Theorem relating the functions : {count,add} *)
 Theorem count_add_element : forall (v : nat) (s : bag),
   (count v (add v s)) = (count v s) + (S O).
@@ -241,7 +273,8 @@ Proof.
   - simpl. reflexivity.
 Qed.
 
-(* Induction on Lists *)
+(* To prove that the length of a list is equal to its reverse, we need to show that :
+   length (l1 ++ l2) = length l1 + length l2 *)
 Theorem app_assoc : forall l1 l2 l3 : natlist,
   l1 ++ (l2 ++ l3) = (l1 ++ l2) ++ l3.
 Proof.
@@ -251,15 +284,6 @@ Proof.
   - simpl. rewrite -> IHl1'. reflexivity.
 Qed.
 
-(* Reversing a List *)
-Fixpoint rev (l : natlist) : natlist :=
-  match l with
-  | [ ] => [ ]
-  | h :: l' => (rev l') ++ [h]
-  end.
-
-(* To prove that the length of a list is equal to its reverse, we need to show that :
-   length (l1 ++ l2) = length l1 + length l2 *)
 Theorem length_concat : forall l1 l2 : natlist,
   length (l1 ++ l2) = (length l1) + (length l2).
 Proof.
@@ -277,3 +301,87 @@ Proof.
   - simpl. reflexivity.
   - simpl. rewrite -> length_concat. simpl. rewrite -> IHl1'. rewrite -> plus_comm. reflexivity.
 Qed.
+
+Theorem app_nil_r : forall l : natlist,
+  l ++ [ ] = l.
+Proof.
+  intros l.
+  induction l as [| n' l1' IHl1'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHl1'. reflexivity.
+Qed.
+
+Theorem rev_app_distr : forall l1 l2 : natlist,
+  rev (l1 ++ l2) = rev l2 ++ rev l1.
+Proof.
+  intros l1 l2.
+  induction l1 as [| n' l1' IHl1'].
+  - simpl. rewrite -> app_nil_r. reflexivity.
+  - simpl. rewrite -> IHl1'. rewrite <- app_assoc. reflexivity.
+Qed.
+
+Theorem rev_involutive : forall l : natlist,
+  rev (rev l) = l.
+Proof.
+  intros l.
+  induction l as [| n' l1' IHl1'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> rev_app_distr. rewrite -> IHl1'. simpl. reflexivity.
+Qed.
+
+Theorem app_assoc4 : forall l1 l2 l3 l4 : natlist,
+  l1 ++ (l2 ++ (l3 ++ l4)) = ((l1 ++ l2) ++ l3) ++ l4.
+Proof.
+  intros l1 l2 l3 l4.
+  induction l1 as [| n' l1' IHl1'].
+  - simpl. rewrite -> app_assoc. reflexivity.
+  - simpl. simpl. simpl. rewrite -> IHl1'. reflexivity.
+Qed.
+
+Theorem distribute_elem_concatenation : forall l1 l2 : natlist, forall n : nat,
+  n :: (l1 ++ l2) = (n :: l1) ++ l2.
+Proof.
+  intros n l1 l2.
+  induction l1 as [| n' l1' IHl1'].
+  - simpl. reflexivity.
+  - simpl. simpl. reflexivity.
+Qed.
+      
+Theorem nonzeros_app : forall l1 l2 : natlist,
+  nonzeros (l1 ++ l2) = (nonzeros l1) ++ (nonzeros l2).
+Proof.
+  intros l1 l2.
+  induction l1 as [| n' l1' IHl1'].
+  - simpl. reflexivity.
+  - induction n' as [| n'' IHn''].
+      simpl. rewrite -> IHl1'. reflexivity.
+      simpl. rewrite -> IHl1'. rewrite -> distribute_elem_concatenation. reflexivity.
+ Qed.
+
+Theorem beq_natlist_refl : forall l : natlist,
+  true = beq_natlist l l.
+Proof.
+  intros l.
+  induction l as [| n l' IHl'].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHl'. rewrite <- beq_nat_refl. reflexivity.
+Qed.
+  
+Theorem count_member_nonzero : forall s : bag,
+  leq_nat (S O) (count (S O) ((S O) :: s)) = true.
+Proof.
+  intros s.
+  induction s as [| n' l' IHl'].
+  - simpl. reflexivity.
+  - induction n' as [| n'' IHn''].
+    simpl. rewrite <- IHl'. simpl. reflexivity.
+    simpl. reflexivity.
+Qed.
+
+Theorem leq_nat_n_Sn : forall n,
+  leq_nat n (S n) = true.
+Proof.
+  intros n.
+  induction n as [| n' IHn'].
+  - simpl. reflexivity.
+  - simpl. rewrite IHn'. reflexivity. Qed.
