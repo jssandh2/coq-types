@@ -384,4 +384,5 @@ Proof.
   intros n.
   induction n as [| n' IHn'].
   - simpl. reflexivity.
-  - simpl. rewrite IHn'. reflexivity. Qed.
+  - simpl. rewrite IHn'. reflexivity.
+Qed.
