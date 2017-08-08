@@ -194,7 +194,7 @@ Fixpoint remove_one_helper (v : nat) (s : bag) (safe : bag) : bag :=
   | [ ] => safe
   | h :: t => match (beq_nat v h) with
               | true => (safe ++ t)
-              | false => (remove_one_helper v t ([h] ++ safe))
+              | false => (remove_one_helper v t (safe ++ [h]))
               end
   end.
 
@@ -386,3 +386,4 @@ Proof.
   - simpl. reflexivity.
   - simpl. rewrite IHn'. reflexivity.
 Qed.
+  
