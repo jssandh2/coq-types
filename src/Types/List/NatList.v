@@ -386,4 +386,3 @@ Proof.
   - simpl. reflexivity.
   - simpl. rewrite IHn'. reflexivity.
 Qed.
-  
