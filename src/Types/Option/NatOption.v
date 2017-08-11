@@ -15,7 +15,7 @@ Fixpoint nth_nat_element (l : natlist) (n : nat) : natoption :=
   match l with
   | [ ] => None
   | h :: t => match (beq_nat n O) with
-             | true => h
+             | true => Some h
              | false => (nth_nat_element t (pred n))
              end
   end.
@@ -37,7 +37,7 @@ Definition hd_error (l : natlist) : natoption :=
 
 Theorem option_elim_hd : forall l : natlist, forall n : nat,
   hd n l = option_elim n (hd_error l).
-Proof
+Proof.
   intros l n.
   induction l as [| n1 l1 IHl1].
   - simpl. reflexivity.
