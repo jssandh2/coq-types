@@ -8,6 +8,12 @@ Inductive bool : Type :=
   | true : bool
   | false : bool.
 
+Definition negate_bool (b:bool) : bool :=
+  match b with
+  | true => false
+  | false => true
+end.
+
 Definition pred (n:nat) : nat :=
   match n with
     | O => O

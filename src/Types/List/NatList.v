@@ -327,7 +327,7 @@ Proof.
   induction l as [| n' l1' IHl1'].
   - simpl. reflexivity.
   - simpl. rewrite -> rev_app_distr. rewrite -> IHl1'. simpl. reflexivity.
-Qed.
+Qed.0
 
 Theorem app_assoc4 : forall l1 l2 l3 l4 : natlist,
   l1 ++ (l2 ++ (l3 ++ l4)) = ((l1 ++ l2) ++ l3) ++ l4.
