@@ -225,7 +225,23 @@ Definition failure_test {X : Type} (x : X) (y : list X * list X) (z : X -> bool)
 Definition partition {X : Type} (test : X -> bool) (l : list X) : list X * list X :=
   fold (fun x y => (failure_test x y test)) l (pair [ ] [ ]).
 
-(* /////////////// PROOFS \\\\\\\\\\\\\\\\\\\ *)
+Fixpoint flat_map {X Y : Type} (f : X -> list Y) (l : list X) : list Y :=
+  match l with
+  | [ ] => [ ]
+  | h :: t => (f h) ++ (flat_map f t)
+  end.
+
+Definition option_map {X Y : Type} (f : X -> Y) (xo : option X) : option Y :=
+  match xo with
+  | None => None
+  | Some x => Some (f x)
+  end.
+
+(* Higher-Order Function Constructors *)
+Definition constfun {X : Type} (x : X) : nat -> X :=
+  fun (k : nat) => x.
+  
+(* /////////////// PROOF \\\\\\\\\\\\\\\\\\\ *)
  
 Theorem map_rev : forall X Y : Type, forall f : X -> Y, forall l : list X,
   map f (rev l) = rev (map f l).
@@ -237,4 +253,61 @@ Theorem map_rev : forall X Y : Type, forall f : X -> Y, forall l : list X,
 Qed. *)
 Admitted.
 
-Compute (partition (fun n => leq_nat n (S (S (S O)))) [O;(S O);(S (S (S (S O))));(S (S (S (S (S O)))));(S (S O))]).
+(* ////////////// EXERCISES \\\\\\\\\\\\\\\\\ *)
+
+(* Fold Length *)
+Definition fold_length {X : Type} (l : list X) : nat :=
+  fold (fun _ n => S n) l O.
+
+(* Proof that : fold_length ≡ length *)
+Theorem fold_length_correct : forall X : Type, forall l : list X,
+  fold_length l = length l.
+Proof.
+  intros X l.
+  induction l as [| n l' IHl'].
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHl'. reflexivity.
+Qed.
+
+(* Fold Map *)
+Definition fold_map {X Y : Type} (f : X -> Y) (l : list X) : list Y :=
+  fold (fun x y => (f x) :: y) l [ ].
+
+(* Proof that fold_map ≡ map *)  
+Theorem fold_map_correct : forall X Y : Type, forall f : X -> Y, forall l : list X,
+  fold_map f l = map f l.
+Proof.
+  intros X Y f l.
+  induction l as [| n l' IHl'].
+  - simpl. reflexivity.
+  - simpl. rewrite <- IHl'. reflexivity.
+Qed.
+
+(* Currying *)
+(* f : A → B → C ≡ f : A → (B → C) [Right-Associative Typing, in keeping with the λ-calculus [Typed]] *)
+(* So, f a, for some a ∈ A is - f a : B → C --> This is the standard Currying format *)
+(* Uncurrying --> Given some f : A → B → C ≡ (A * B) → C , where `*` denotes the Product-Type *)
+Definition prod_curry {X Y Z : Type} (f : X * Y -> Z) (x : X) (y : Y) : Z :=
+  f (x, y).
+
+Definition prod_uncurry {X Y Z : Type} (f : X -> Y -> Z) (p : X * Y): Z :=
+  f (fst p) (snd p).
+
+(* Proof that : prod_curry = (prod_curry)^(-1) *)
+Theorem uncurry_curry : forall X Y Z : Type, forall f : X -> Y -> Z, forall x : X, forall y : Y,
+  prod_curry (prod_uncurry f) x y = f x y.
+Proof.
+  intros X Y Z f x y.
+  simpl.
+  reflexivity.
+Qed.
+
+Theorem curry_uncurry : forall X Y Z : Type, forall f : (X * Y) -> Z, forall p : (X * Y),
+  prod_uncurry (prod_curry f) p = f p.
+Proof.
+  intros X Y Z f p.
+  destruct p as [x y].
+  reflexivity.
+Qed.
+
+(* Church Numerals *)
