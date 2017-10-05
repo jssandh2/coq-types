@@ -317,7 +317,7 @@ Proof.
   intros X n l H.
   induction l as [ | m l' IHl'].
   - simpl. simpl. reflexivity.
-  - rewrite <- H. simpl. rewrite <- IHl'. rewrite <- H. reflexivity.
+  - intros H1. rewrite <- H. simpl. rewrite <- IHl'. rewrite <- H1. reflexivity.
 Qed.
   
 (* Church Numerals *)
