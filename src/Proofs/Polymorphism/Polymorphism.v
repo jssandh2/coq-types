@@ -286,7 +286,7 @@ Qed.
 (* Currying *)
 (* f : A → B → C ≡ f : A → (B → C) [Right-Associative Typing, in keeping with the λ-calculus [Typed]] *)
 (* So, f a, for some a ∈ A is - f a : B → C --> This is the standard Currying format *)
-(* Uncurrying --> Given some f : A → B → C ≡ (A * B) → C , where `*` denotes the Product-Type *)
+(* Uncurrying --> Given some f : A → B → C ≡ (A * B) → C ≡ ∏α:(A * B) → C, where `*` denotes the Product-Type *)
 Definition prod_curry {X Y Z : Type} (f : X * Y -> Z) (x : X) (y : Y) : Z :=
   f (x, y).
 
@@ -310,4 +310,14 @@ Proof.
   reflexivity.
 Qed.
 
+(* N⁽ᵗʰ⁾-error function proof *)
+Theorem curried_nth_error : forall X : Type, n : nat, l : list X,
+  length l = n -> @nth_error X l n = None.
+Proof.
+  intros X n l H.
+  induction l as [ | m l' IHl'].
+  - simpl. simpl. reflexivity.
+  - rewrite <- H. simpl. rewrite <- IHl'. reflexivity.
+Qed.
+  
 (* Church Numerals *)
