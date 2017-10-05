@@ -311,7 +311,7 @@ Proof.
 Qed.
 
 (* N⁽ᵗʰ⁾-error function proof *)
-Theorem curried_nth_error : forall X : Type, n : nat, l : list X,
+Theorem curried_nth_error : forall X : Type, forall n : nat, forall l : list X,
   length l = n -> @nth_error X l n = None.
 Proof.
   intros X n l H.
