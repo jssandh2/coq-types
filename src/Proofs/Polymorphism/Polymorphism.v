@@ -311,13 +311,36 @@ Proof.
 Qed.
 
 (* N⁽ᵗʰ⁾-error function proof *)
+(* Informal Proof 
 Theorem curried_nth_error : forall X : Type, forall n : nat, forall l : list X,
   length l = n -> @nth_error X l n = None.
-Proof.
+Proof. `
   intros X n l H.
   induction l as [ | m l' IHl'].
-  - simpl. simpl. reflexivity.
-  - intros H1. rewrite <- H. simpl. rewrite <- IHl'. rewrite <- H1. reflexivity.
-Qed.
+  - simpl. reflexivity.
+  - (rewrite ← curr_H). rewrite <- H. simpl. rewrite <- IHl'. simpl. reflexivity.
+Qed. *)
   
 (* Church Numerals *)
+Definition nat_number := forall X : Type, (X -> X) -> X -> X.
+
+Definition zero : nat_number := fun (X : Type) (f : X -> X) (x : X) => x.
+
+Definition one : nat_number := fun (X : Type) (f : X -> X) (x : X) => (f x).
+
+(* Let use define :
+1) The Successor Function
+2) Addition ≡ Plus
+3) Multiplication ≡ Repeated Addition
+4) Exponentitation ≡ Repeated Multiplication *)
+Definition succ_nat (n : nat_number) : nat_number :=
+  fun (X : Type) (f : X -> X) (x : X) => f (n X f x).
+
+Definition plus_nat (n m : nat_number) : nat_number :=
+  fun (X : Type) (f : X -> X) (x : X) => m X f (n X f x).
+
+Definition mult_nat (n m : nat_number) : nat_number :=
+  fun (X : Type) (f : X -> X) (x : X) => m X (n X f) x.
+
+Definition exp_nat (n m : nat_number): nat_number :=
+  m mult_nat (mult_nat n) one. (* FIX THIS! *)
